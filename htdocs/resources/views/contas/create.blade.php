@@ -7,8 +7,32 @@
 </head>
 <body>
     <h1>Cadastrar a contas</h1>
-    <a href="{{ route('contas.edit') }}">Editar Conta</a>
-    <a href="{{ route('contas.show') }}">Mostrar Conta</a>
+
+    @if ($errors->any())
+    <div style="color: red;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                {{ $error }} <br>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <a href="{{ route('contas.index') }}">Listar as contas</a>
+
+    <form action="{{ route('contas.store') }}" method="POST">
+        @csrf
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" id="nome" value="{{ old('nome') }}">
+        <br>
+        <label for="valor">Valor:</label>
+        <input type="number" name="valor" id="valor" value="{{ old('valor') }}">
+        <br>
+        <label for="vencimento">Vencimento:</label>
+        <input type="date" name="vencimento" id="vencimento" value="{{ old('vencimento') }}">
+        <br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
 </body>
 </html>

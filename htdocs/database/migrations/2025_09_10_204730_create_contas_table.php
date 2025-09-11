@@ -16,14 +16,10 @@ return new class extends Migration
             $table->string('nome');
             $table->float('valor');
             $table->date('vencimento');
-
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('contas');

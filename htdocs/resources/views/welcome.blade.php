@@ -10,7 +10,5 @@
         <h1>Ola Mundo</h1>
         <a href="{{ route('contas.index') }}">Listar as contas</a>
         <a href="{{ route('contas.create') }}">Cadastrar</a>
-        <a href="{{ route('contas.edit') }}">Editar Conta</a>
-        <a href="{{ route('contas.show') }}">Mostrar Conta</a>
     </body>
 </html>

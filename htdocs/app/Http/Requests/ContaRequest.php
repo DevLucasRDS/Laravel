@@ -23,19 +23,28 @@ class ContaRequest extends FormRequest
     {
         return [
             'nome' => 'required|string|max:255',
-            'valor' => 'required|numeric',
+            'valor' => 'required|max:10',
             'vencimento' => 'required|date',
         ];
     }
 
     public function messages(): array
     {
-        return[
+        return [
             'nome.required' => 'O campo nome é obrigatório',
             'valor.required' => 'O campo valor é obrigatório',
+            'valor.max' => 'O preço so pode ter 8 numeros',
             'vencimento.required' => 'O campo vencimento é obrigatório'
         ];
     }
+    protected function prepareForValidation()
+    {
+        if ($this->valor) {
+            $valor = str_replace('.', '', $this->valor); // tira pontos de milhar
+            $valor = str_replace(',', '.', $valor);     // troca vírgula por ponto
+            $this->merge([
+                'valor' => (float) $valor,              // converte para float
+            ]);
+        }
+    }
 }
-
-

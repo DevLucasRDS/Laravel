@@ -9,17 +9,31 @@
     <a href="{{route('contas.create')}}">Cadastrar</a>
     <h1>Listar as contas</h1>
 
+@if(session('success'))
+        <span style="color: 'green'">
+        {{ session('success')}}
+        </span>
+    @endif
+
     @forelse($contas as $conta)
-        <p>
         ID: {{ $conta->id }} <br>
         Nome: {{ $conta->nome }} <br>
         Valor: {{ ' R$ ' . number_format($conta-> valor, 2, ',', '.')}} <br>
         Vencimento: {{ \Carbon\Carbon::parse($conta->vencimento)->timezone('America/Sao_Paulo')->format('d/m/Y') }} <br>
 
-        <a href="{{ route('contas.show', ['conta' => $conta-> id]) }}">Visualizar</a>
-        <a href="{{ route('contas.edit', ['conta' => $conta-> id]) }}">Editar</a>
+        <a href="{{ route('contas.show', ['conta' => $conta -> id]) }}">
+            <button type="button">Visualizar</button>
+        </a>
+        <a href="{{ route('contas.edit', ['conta' => $conta -> id]) }}">
+             <button type="button">Editar</button>
+        </a>
 
-        </p>
+     <form action="{{ route('contas.destroy', $conta->id) }}" method="POST" style="display:inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" onclick="return confirm('Tem certeza que deseja apagar esta conta?')">Apagar</button>
+     </form>
+     
         <hr>
         @empty
             <p style="color: red">Nenhuma conta cadastrada.</p>

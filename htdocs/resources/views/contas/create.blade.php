@@ -1,47 +1,51 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script defer src="{{ asset('js/custom.js') }}"></script>
-</head>
-
-<body>
-    <h1>Cadastrar a contas</h1>
+@section('content')
+<div class="card mt-4 mb-4 border shadow">
+    <div class="card-header d-flex justify-content-between">
+        <span>Cadastrar conta</span>
+        <span>
+            <a href="{{ route('contas.index')}}" class="btn btn-primary btn-sm me-1">Listar</a>
+        </span>
+    </div>
 
     @if ($errors->any())
     <div style="color: red;">
-        <ul>
+        <div class="alert alert-danger m-3">
             @foreach ($errors->all() as $error)
             {{ $error }} <br>
             @endforeach
-        </ul>
+        </div>
     </div>
     @endif
 
-    <a href="{{ route('contas.index') }}">Listar as contas</a>
 
-    <form action="{{ route('contas.store') }}" method="POST">
-        @csrf
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" id="nome" value="{{ old('nome') }}">
+    <div class="card-body">
+        <form class="row g-3" action="{{ route('contas.store')}}" method="POST">
+            @csrf
 
-        <br>
+            <div class="col-12">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control"
+                    value="{{ old('nome')}}">
+            </div>
 
-        <label for="valor">Valor:</label>
-        <input type="text" name="valor" id="valor" value="{{ old('valor') }}">
+            <div class="col-12">
+                <label for="valor" class="form-label">Valor</label>
+                <input type="text" name="valor" id="valor" class="form-control"
+                    value="{{ old('valor') }}">
+            </div>
 
-        <br>
+            <div class="col-12">
+                <label for="vencimento" class="form-label">Vencimento</label>
+                <input type="date" name="vencimento" id="vencimento" class="form-control"
+                    value="{{ old('vencimento')}}">
+            </div>
 
-        <label for="vencimento">Vencimento:</label>
-        <input type="date" name="vencimento" id="vencimento" value="{{ old('vencimento') }}">
-
-        <br>
-        <button type="submit">Cadastrar</button>
-    </form>
-
-</body>
-
-</html>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-sm">Cadastrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

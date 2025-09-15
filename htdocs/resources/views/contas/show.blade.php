@@ -1,27 +1,43 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Listar as contas</h1>
-    <a href="{{ route('contas.index') }}">Listar as contas</a>
-    <a href="{{ route('contas.create') }}">Cadastrar</a>
+@extends('layouts.admin')
+
+@section('content')
+<div class="card mt-4 mb-4 border shadow">
+    <div class="card-header d-flex justify-content-between">
+        <span>Visualizar conta</span>
+        <span>
+            <a href="{{ route('contas.index')}}" class="btn btn-primary btn-sm me-1">Listar</a>
+            <a href="{{ route('contas.edit', ['conta' => $conta-> id])}}" class="btn btn-warning btn-sm me-1">Editar</a>
+        </span>
+    </div>
 
     @if(session('success'))
-        <span style="color: 'green'">
+    <div class="alert alert-success m-3" role="alert">
         {{ session('success')}}
-        </span>
+    </div>
     @endif
 
-    <br> ID: {{ $conta->id }} <br>
-    Nome: {{ $conta->nome }} <br>
-    Valor: {{ ' R$ ' . number_format($conta-> valor, 2, ',', '.')}} <br>
-    Vencimento: {{ \Carbon\Carbon::parse($conta->vencimento)->timezone('America/Sao_Paulo')->format('d/m/Y') }} <br>
-    Data de criação: {{ \Carbon\Carbon::parse($conta->created_at)->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }} <br>
-    Data atualizada : {{ \Carbon\Carbon::parse($conta->updated_at)->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }}
+    <div class="card-body">
 
-</body>
-</html>
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">{{ $conta->id }}</dd>
+
+            <dt class="col-sm-3">Nome</dt>
+            <dd class="col-sm-9">{{ $conta->nome }}</dd>
+
+            <dt class="col-sm-3">Valor</dt>
+            <dd class="col-sm-9">{{ ' R$ ' . number_format($conta-> valor, 2, ',', '.')}}</dd>
+
+            <dt class="col-sm-3">Vencimento</dt>
+            <dd class="col-sm-9">{{ \Carbon\Carbon::parse($conta->vencimento)->timezone('America/Sao_Paulo')->format('d/m/Y') }}</dd>
+
+            <dt class="col-sm-3">Data de criação</dt>
+            <dd class="col-sm-9">{{ \Carbon\Carbon::parse($conta->created_at)->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }}</dd>
+
+            <dt class="col-sm-3">Data de atualização: </dt>
+            <dd class="col-sm-9">{{ \Carbon\Carbon::parse($conta->updated_at)->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }}</dd>
+        </dl>
+
+    </div>
+</div>
+@endsection

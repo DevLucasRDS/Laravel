@@ -9,15 +9,7 @@
         </span>
     </div>
 
-    @if ($errors->any())
-    <div style="color: red;">
-        <div class="alert alert-danger m-3">
-            @foreach ($errors->all() as $error)
-            {{ $error }} <br>
-            @endforeach
-        </div>
-    </div>
-    @endif
+    <x-alert />
 
 
     <div class="card-body">

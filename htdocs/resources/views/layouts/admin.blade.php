@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contas</title>
+    @vite(["resources/sass/app.scss", "resources/js/app.js"])
     <link rel="shortcut icon" href="{{ asset('imagens/favicon.ico') }}">
     <script defer src="{{ asset('js/custom.js') }}"></script>
-    @vite(["resources/sass/app.scss", "resources/js/app.js"])
+    <!-- <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
 </head>
 
 <body>

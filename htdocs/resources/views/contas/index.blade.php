@@ -37,6 +37,8 @@
         <span>
             <a href="{{ route('contas.create')}}" class="btn btn-success btn-sm">Cadastrar</a>
             <a href="{{ url('gerar-pdf-conta?' . request() ->getQueryString())}}" class="btn btn-info btn-sm">Gerar PDF</a>
+            <a href="{{ url('gerar-csv-conta?' . request() ->getQueryString())}}" class="btn btn-success btn-sm">Gerar Excel</a>
+        </span>
         </span>
 
     </div>
@@ -51,6 +53,7 @@
                     <th scope="col">Nome</th>
                     <th scope="col">Valor</th>
                     <th scope="col">Vencimento</th>
+                    <th scope="col">Situação</th>
                     <th scope="col" class="text-center">Ações</th>
                 </tr>
             </thead>
@@ -61,6 +64,14 @@
                     <td>{{ $conta->nome }}</td>
                     <td>{{ ' R$ ' . number_format($conta-> valor, 2, ',', '.')}}</td>
                     <td>{{ \Carbon\Carbon::parse($conta->vencimento)->timezone('America/Sao_Paulo')->format('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ route('contas.change-situation', ['conta' => $conta-> id])}}">
+                            <span class="badge text-bg-{{ $conta->situacaoConta->cor }}">
+                                {{ $conta->situacaoConta->nome }}
+                            </span>
+                        </a>
+                    </td>
+
                     <td class="d-md-flex justify-content-center">
                         <a href="{{ route('contas.show', ['conta' => $conta -> id]) }}">
                             <button type="button" class="btn btn-primary btn-sm me-1">Visualizar</button>

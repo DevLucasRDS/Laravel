@@ -5,10 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contas</title>
+    <!-- Vite (CSS/JS do Laravel) -->
     @vite(["resources/sass/app.scss", "resources/js/app.js"])
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('imagens/favicon.ico') }}">
-    <script defer src="{{ asset('js/custom.js') }}"></script>
-    <!-- <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+
+    <!-- Select2 CSS com tema Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <!-- SweetAlert2 CSS (opcional) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 </head>
 
 <body>
@@ -31,6 +41,17 @@
         @yield('content')
     </div>
 
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script custom geral -->
+    <script src="{{ asset('js/custom.js') }}"></script>
 
 
 </body>

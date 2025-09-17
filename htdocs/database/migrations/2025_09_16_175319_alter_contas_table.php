@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contas', function (Blueprint $table) {
-            $table->foreignId('situacao_conta_id')->default(2)->after('vencimento')->constrained('situacoes_contas');
+            $table->unsignedBigInteger('situacao_conta_id')->after('vencimento')->default(2);
+            $table->foreign('situacao_conta_id')->references('id')->on('situacoes_contas');
         });
     }
 

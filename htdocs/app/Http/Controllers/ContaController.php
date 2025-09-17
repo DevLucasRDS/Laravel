@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContaRequest;
 use App\Models\Conta;
+use App\Models\SituacaoConta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ContaController extends Controller
 {
@@ -23,6 +25,7 @@ class ContaController extends Controller
             ->when($request->filled('data_fim'), function ($whenQuery) use ($request) {
                 return $whenQuery->where('vencimento', '<=', \Carbon\Carbon::parse($request->data_fim)->format('Y-m-d'));
             })
+            ->with('situacaoConta')
             ->orderByDesc('created_at')
             ->paginate(5)
             ->withQueryString();
@@ -35,7 +38,10 @@ class ContaController extends Controller
     }
     public function create()
     {
-        return view('contas.create');
+        $situacoesContas = SituacaoConta::orderBy('nome', 'asc')->get();
+        return view('contas.create', [
+            'situacoesContas' => $situacoesContas,
+        ]);
     }
 
     public function store(ContaRequest $request)
@@ -44,6 +50,7 @@ class ContaController extends Controller
             'nome' => $request->nome,
             'valor' => str_replace(',', '.', str_replace('.', '',  $request->valor),),
             'vencimento' => $request->vencimento,
+            'situacao_conta_id' => $request->situacao_conta_id
         ]);
 
         return redirect()->route('contas.show', $conta->id)
@@ -56,8 +63,11 @@ class ContaController extends Controller
     }
     public function edit(Conta $conta)
     {
-
-        return view('contas.edit', ['conta' => $conta]);
+        $situacoesContas = SituacaoConta::orderBy('nome', 'asc')->get();
+        return view('contas.edit', [
+            'conta' => $conta,
+            'situacoesContas' => $situacoesContas,
+        ]);
     }
     public function update(Conta $conta, ContaRequest $request)
     {
@@ -68,6 +78,7 @@ class ContaController extends Controller
                 'nome' => $request->nome,
                 'valor' => $request->valor,
                 'vencimento' => $request->vencimento,
+                'situacao_conta_id' => $request->situacao_conta_id
             ]);
             Log::info('conta editada com sucesso', ['id' => $conta->id, 'conta' => $conta]);
 
@@ -105,5 +116,68 @@ class ContaController extends Controller
             'tamanho' => $tamanho,
         ])->setPaper('a4', 'portrait');
         return $pdf->download('Listar_contas.pdf');
+    }
+    public function changeSituation(Conta $conta)
+    {
+        try {
+
+
+            if ($conta->situacao_conta_id > 1) {
+                $conta->decrement('situacao_conta_id');
+            } else if ($conta->situacao_conta_id == 1) {
+                $conta->update([
+                    'situacao_conta_id' => 3
+                ]);
+            }
+
+
+            Log::info('Situação da conta editada com sucesso', ['id' => $conta->id, 'conta' => $conta]);
+
+            return back()->with('success', 'Situação da conta editada com sucesso!');
+        } catch (Exception $e) {
+            Log::warning('Situação da conta não editada', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Situação da conta não Editada');
+        }
+    }
+    public function gerarCsv(Request $request)
+    {
+        $contas = Conta::when($request->has('nome'), function ($whenQuery) use ($request) {
+            return $whenQuery->where('nome', 'like', '%' . $request->nome . '%');
+        })
+            ->when($request->filled('data_inicio'), function ($whenQuery) use ($request) {
+                return $whenQuery->where('vencimento', '>=', \Carbon\Carbon::parse($request->data_inicio)->format('Y-m-d'));
+            })
+            ->when($request->filled('data_fim'), function ($whenQuery) use ($request) {
+                return $whenQuery->where('vencimento', '<=', \Carbon\Carbon::parse($request->data_fim)->format('Y-m-d'));
+            })
+            ->with('situacaoConta')
+            ->orderByDesc('vencimento')
+            ->get();
+        $total = $contas->sum('valor');
+        $tamanho = $contas->count();
+
+        $csvNomeArquivo = tempnam(sys_get_temp_dir(), 'csv_' . Str::ulid());
+
+        $arquivo_aberto = fopen($csvNomeArquivo, 'w');
+
+        $cabecalho = [
+            'id',
+            'Nome',
+            'Vencimento',
+            mb_convert_encoding('Situação', 'ISO-8859-1', 'UTF-8'),
+            'valor'
+        ];
+
+        fputcsv($arquivo_aberto, $cabecalho, ';');
+
+        foreach ($contas as $conta) {
+            $contaArray = [
+                'id' => $conta->id,
+                'nome' => $conta->nome,
+                'vencimento' => $conta->vencimento,
+                'situacao' => $conta->situacaoConta->nome,
+                'valor' => number_format($conta->valor, 2, ',', '.'),
+            ];
+        }
     }
 }

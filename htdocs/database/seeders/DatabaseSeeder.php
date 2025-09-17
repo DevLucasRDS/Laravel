@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\SituacaoConta;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,7 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            ContaSeeder::class
+            SituacaoContaSeeder::class,
+            ContaSeeder::class,
         ]);
     }
 }

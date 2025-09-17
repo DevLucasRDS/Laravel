@@ -15,3 +15,5 @@ Route::get('/edit-conta/{conta}', [ContaController::class, 'edit'])->name('conta
 Route::put('/update-conta/{conta}', [ContaController::class, 'update'])->name('contas.update');
 Route::delete('/destroy-conta/{conta}', [ContaController::class, 'destroy'])->name('contas.destroy');
 Route::get('/gerar-pdf-conta', [ContaController::class, 'gerarPdf'])->name('contas.gerarPdf');
+Route::get('/gerar-csv-conta', [ContaController::class, 'gerarCsv'])->name('contas.gerarCsv');
+Route::get('/change-situation-conta/{conta}', [ContaController::class, 'ChangeSituation'])->name('contas.change-situation');

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class ContaRequest extends FormRequest
 {
@@ -25,6 +26,7 @@ class ContaRequest extends FormRequest
             'nome' => 'required|string|max:255',
             'valor' => 'required|max:10',
             'vencimento' => 'required|date',
+            'situacao_conta_id' => 'Required',
         ];
     }
 
@@ -34,7 +36,8 @@ class ContaRequest extends FormRequest
             'nome.required' => 'O campo nome é obrigatório',
             'valor.required' => 'O campo valor é obrigatório',
             'valor.max' => 'O preço so pode ter 8 numeros',
-            'vencimento.required' => 'O campo vencimento é obrigatório'
+            'vencimento.required' => 'O campo vencimento é obrigatório',
+            'situacao_conta_id.required' => 'O campo de situação é obrigatorio',
         ];
     }
     protected function prepareForValidation()

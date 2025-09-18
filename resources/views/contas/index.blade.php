@@ -36,8 +36,10 @@
         <span>Listar contas</span>
         <span>
             <a href="{{ route('contas.create')}}" class="btn btn-success btn-sm">Cadastrar</a>
-            <a href="{{ url('gerar-pdf-conta?' . request() ->getQueryString())}}" class="btn btn-info btn-sm">Gerar PDF</a>
+            <a href="{{ route('contas.send-email-pendente-conta') }}" class="btn btn-info btn-sm">Enviar Email</a>
+            <a href="{{ url('gerar-pdf-conta?' . request() ->getQueryString())}}" class="btn btn-warning btn-sm">Gerar PDF</a>
             <a href="{{ url('gerar-csv-conta?' . request() ->getQueryString())}}" class="btn btn-success btn-sm">Gerar Excel</a>
+            <a href="{{ url('gerar-docx-conta?' . request() ->getQueryString())}}" class="btn btn-primary btn-sm">Gerar Word</a>
         </span>
         </span>
 
@@ -83,7 +85,7 @@
                         <form id="formExcluir{{$conta ->id}}" action="{{ route('contas.destroy', $conta->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger  btn-sm me-1" onclick="confirmarExclusao(event, '{{ $conta -> id}}' )">Apagar</button>
+                            <button type="submit" class="btn btn-danger  btn-sm me-1 btnDelete" data-delete-id="{{ $conta->id}}">Apagar</button>
                         </form>
                     </td>
                 </tr>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContaController;
+use App\Http\Controllers\SendEmailContaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,4 +17,6 @@ Route::put('/update-conta/{conta}', [ContaController::class, 'update'])->name('c
 Route::delete('/destroy-conta/{conta}', [ContaController::class, 'destroy'])->name('contas.destroy');
 Route::get('/gerar-pdf-conta', [ContaController::class, 'gerarPdf'])->name('contas.gerarPdf');
 Route::get('/gerar-csv-conta', [ContaController::class, 'gerarCsv'])->name('contas.gerarCsv');
+Route::get('/gerar-docx-conta', [ContaController::class, 'gerarDocx'])->name('contas.gerarDocx');
+Route::get('/send-email-pendente-conta', [SendEmailContaController::class, 'sendEmailPendenteConta'])->name('contas.send-email-pendente-conta');
 Route::get('/change-situation-conta/{conta}', [ContaController::class, 'ChangeSituation'])->name('contas.change-situation');

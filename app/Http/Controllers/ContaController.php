@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use PhpOffice\PhpWord\PhpWord;
 
 class ContaController extends Controller
 {
@@ -173,11 +174,78 @@ class ContaController extends Controller
         foreach ($contas as $conta) {
             $contaArray = [
                 'id' => $conta->id,
-                'nome' => $conta->nome,
-                'vencimento' => $conta->vencimento,
-                'situacao' => $conta->situacaoConta->nome,
+                'nome' => mb_convert_encoding($conta->nome, 'ISO-8859-1', 'UTF-8'),
+                'vencimento' => \Carbon\Carbon::parse($conta->vencimento)->format('d/m/Y'),
+                'situacao' => mb_convert_encoding($conta->situacaoConta->nome, 'ISO-8859-1', 'UTF-8'),
                 'valor' => number_format($conta->valor, 2, ',', '.'),
             ];
+            fputcsv($arquivo_aberto, $contaArray, ';');
         }
+
+        $rodape = [number_format($tamanho, 2, ',', ','), '', '', '', number_format($total, 2, ',', '.')];
+
+        fputcsv($arquivo_aberto, $rodape, ';');
+        fclose($arquivo_aberto);
+        return response()->download($csvNomeArquivo, 'relatorio_contas' . Str::ulid() . '.csv');
+    }
+
+    public function gerarDocx(Request $request)
+    {
+        $contas = Conta::when($request->has('nome'), function ($whenQuery) use ($request) {
+            return $whenQuery->where('nome', 'like', '%' . $request->nome . '%');
+        })
+            ->when($request->filled('data_inicio'), function ($whenQuery) use ($request) {
+                return $whenQuery->where('vencimento', '>=', \Carbon\Carbon::parse($request->data_inicio)->format('Y-m-d'));
+            })
+            ->when($request->filled('data_fim'), function ($whenQuery) use ($request) {
+                return $whenQuery->where('vencimento', '<=', \Carbon\Carbon::parse($request->data_fim)->format('Y-m-d'));
+            })
+            ->with('situacaoConta')
+            ->orderByDesc('vencimento')
+            ->get();
+        $total = $contas->sum('valor');
+        $tamanho = $contas->count();
+
+        $phpWord = new PhpWord();
+
+        $section = $phpWord->addSection();
+
+        $table = $section->addTable();
+
+        $borderStyle = [
+            'borderColor' => '000000',
+            'borderSize' => 6,
+        ];
+        $table->addRow();
+        $table->addCell(2000, $borderStyle)->addText('id');
+        $table->addCell(2000, $borderStyle)->addText('Nome');
+        $table->addCell(2000, $borderStyle)->addText('Valor');
+        $table->addCell(2000, $borderStyle)->addText('Vencimento');
+        $table->addCell(2000, $borderStyle)->addText('Situação');
+        foreach ($contas as $conta) {
+            $table->addRow();
+            $table->addCell(2000, $borderStyle)->addText($conta->id);
+            $table->addCell(2000, $borderStyle)->addText($conta->nome);
+            $table->addCell(2000, $borderStyle)->addText($conta->valor);
+            $table->addCell(2000, $borderStyle)->addText(\Carbon\Carbon::parse($conta->vencimento)->format('d/m/Y'));
+            $table->addCell(2000, $borderStyle)->addText($conta->situacaoConta->nome);
+        }
+
+        $table->addRow();
+        $table->addCell(2000,)->addText('');
+
+        $table->addRow();
+        $table->addCell(2000, $borderStyle)->addText('Tamanho: ');
+        $table->addCell(2000, $borderStyle)->addText($tamanho);
+        $table->addCell(2000, $borderStyle)->addText('Total: ');
+        $table->addCell(2000, $borderStyle)->addText(number_format($total, 2, ',', '.'));
+
+
+        $filename = 'relatorio_contas_laravel.docx';
+
+        $savePath = storage_path(($filename));
+
+        $phpWord->save($savePath);
+        return response()->download($savePath)->deleteFileAfterSend();
     }
 }

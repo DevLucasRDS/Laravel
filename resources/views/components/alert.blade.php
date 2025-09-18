@@ -9,6 +9,17 @@
 </script>
 @endif
 
+@if(session()->has('error'))
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        Swal.fire({
+            title: "error...",
+            text: "{{ session('error') }}",
+            icon: "error",
+        });
+    })
+</script>
+@endif
 @if ($errors->any())
 @php
 $mensagem = '';
